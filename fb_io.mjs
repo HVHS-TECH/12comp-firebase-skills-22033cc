@@ -22,11 +22,22 @@ console.log('%c fb_io.mjs',
 // List all the functions called by code or html outside of this module
 /**************************************************************/
 export { 
-    fb_initialise };
+    fb_initialise 
+};
 
+/***************************************************************
+// function fb_intitialise()
+// called by html button "fb_initialise()"
+// console logs "fb_intialise()" in orange and white
+ ****************************************************************/
 function fb_initialise() {
+    
     console.log('%c fb_initialise(): ', 
-                'color: ' + COL_C + '; background-color: ' + COL_B + ';');
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_B +';' );
+    console.log("%c galvinise:",
+                'color:'+ COL_B + 
+                '; background-color:' + COL_C + ';');
 }
 
 /**************************************************************/
