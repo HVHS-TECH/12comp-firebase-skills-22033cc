@@ -21,7 +21,7 @@ import { initializeApp }
 import { getDatabase }
     from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
     
-import { getAuth, GoogleAuthProvider, signInWithPopup }
+import { getAuth, GoogleAuthProvider, signInWithPopup,onAuthStateChanged,signOut }
     from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"; 
 
 /**************************************************************/
@@ -29,7 +29,7 @@ import { getAuth, GoogleAuthProvider, signInWithPopup }
 // List all the functions called by code or html outside of this module
 /**************************************************************/
 export { 
-    fb_initialise, fb_authenticate
+    fb_initialise, fb_authenticate, fb_detectLoginChange
 };
 
 /***************************************************************
@@ -63,35 +63,49 @@ function fb_initialise() {
 /***************************************************************
 // function fb_authenticate()
 // called by html button "authenticate"
-// 
+// call functions from import to login the user
  ****************************************************************/
 function fb_authenticate(){
 console.log('%c authenticate():',
     'color:' + COL_C +
     'background-color:' + COL_B + ';');
-    const AUTH = getAuth(); //something is wrong here
+    const AUTH =  getAuth(); //something is wrong here
     const PROVIDER = new GoogleAuthProvider();
-    
     PROVIDER.setCustomParameters({
         prompt: 'select_account'
     });
 
     signInWithPopup(AUTH, PROVIDER).then((result) => {
         alert("thank you for signing correctly")
+        console.log(result)
     })
-
     .catch((error) => {
-        alert("you signed in wrong")
+        alert("Uh Oh, Something went wrong!")
         console.log(error)
     });
+   
 }
 /***************************************************************
 // function fb_detectLoginChange()
-// called by html button "detect login change "
+// called by html button "detect login change"
 // 
  ****************************************************************/
 function fb_detectLoginChange(){
-
+    console.log('%c fb_detectLoginChange(): ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_B +';' );
+    const AUTH = getAuth();
+    onAuthStateChanged(AUTH, (user) => {
+        if (user) {
+            alert("logged in!")
+        } else {
+            alert("logged out!")
+            }
+    
+        }, (error) => {
+            alert("Uh, oh, something went wrong!")
+    
+        });
 }
 /***************************************************************
 // function fb_logOut()
@@ -99,7 +113,18 @@ function fb_detectLoginChange(){
 // 
  ****************************************************************/
 function fb_logOut(){
+    console.log('%c fb_LogOut ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_B +';' );
+    const AUTH = getAuth();
 
+    signOut(AUTH).then(() => {
+        alert("you have successfully been logged out")
+    })
+
+    .catch((error) => {
+        alert("yo have NOT been successfuly logged out")
+    });
 }
 
 /**************************************************************/
