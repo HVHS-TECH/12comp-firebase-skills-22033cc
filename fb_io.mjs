@@ -8,6 +8,8 @@
 /**************************************************************/
 const COL_C = 'white';	    // These two const are part of the coloured 	
 const COL_B = '#CD7F32';	//  console.log for functions scheme
+const COL_G = '#15ff00'
+const COL_R = '#ff0000'
 console.log('%c fb_io.mjs',
             'color: blue; background-color: white;');
 var fb_Db; 
@@ -23,14 +25,14 @@ import { getDatabase }
     
 import { getAuth, GoogleAuthProvider, signInWithPopup,onAuthStateChanged,signOut }
     from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"; 
-    import { ref, set }
+    import { ref, set,get }
     from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 /**************************************************************/
 // EXPORT FUNCTIONS
 // List all the functions called by code or html outside of this module
 /**************************************************************/
 export { 
-    fb_initialise, fb_authenticate, fb_detectLoginChange,fb_logOut,fb_writeRecord
+    fb_initialise, fb_authenticate, fb_detectLoginChange,fb_logOut,fb_writeRecord,fb_readRecord
 };
 
 /***************************************************************
@@ -101,10 +103,9 @@ function fb_detectLoginChange(){
             console.log("users is currently not logged in")
             alert("you are currently not logged in")
         }
-    }, (error) => {
-        console.log("error with logging in")
+
     });
-}
+};
 /***************************************************************
 // function fb_logOut()
 // called by html button "logout "
@@ -118,10 +119,16 @@ function fb_logOut(){
 
     signOut(AUTH).then(() => {
         alert("you have successfully been logged out")
+        console.log('%c successful logout ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_G +';' );
     })
 
     .catch((error) => {
         alert("you have NOT been successfuly logged out. Please try again")
+        console.log('%c unsuccesful logout ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_R +';' );
     });
 }
 
@@ -130,14 +137,21 @@ function fb_logOut(){
 // called by html button "write record"
 // 
  ****************************************************************/
-function fb_writeRecord(user){
-    const REF = ref(fb_Db,"/Stolen_Data");
-    set(REF, {User_Gmail:user}).then(() => {
-        console.log("data has been stolen"); 
+function fb_writeRecord(){
+        console.log('%c fb_writeRecord ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_B +';' );
+    const REF = ref(fb_Db,"Stolen_Data");
+    set(REF, {Price:Math.floor(Math.random()*100)}).then(() => { 
+        console.log('%c data has been stolen ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_G +';' );
     })
     .catch((error) => {
         console.log(error);
-        console.log("data not stolen🥀");
+        console.log('%c data has been stolen ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_R +';' );
     });
 }
 /***************************************************************
@@ -146,7 +160,9 @@ function fb_writeRecord(user){
 // 
  ****************************************************************/
 function fb_readRecord(){
-
+    console.log('%c fb_readRecord ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_B +';' );
 }
 /***************************************************************
 // function fb_readAll()
