@@ -10,7 +10,7 @@ const COL_C = 'white';	    // These two const are part of the coloured
 const COL_B = '#CD7F32';	//  console.log for functions scheme
 console.log('%c fb_io.mjs',
             'color: blue; background-color: white;');
-
+var fb_Db; 
 /**************************************************************/
 // Import all external constants & functions required
 /**************************************************************/
@@ -23,13 +23,14 @@ import { getDatabase }
     
 import { getAuth, GoogleAuthProvider, signInWithPopup,onAuthStateChanged,signOut }
     from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"; 
-
+    import { ref, set }
+    from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 /**************************************************************/
 // EXPORT FUNCTIONS
 // List all the functions called by code or html outside of this module
 /**************************************************************/
 export { 
-    fb_initialise, fb_authenticate, fb_detectLoginChange
+    fb_initialise, fb_authenticate, fb_detectLoginChange,fb_logOut,fb_writeRecord
 };
 
 /***************************************************************
@@ -56,8 +57,8 @@ function fb_initialise() {
         measurementId: "G-G7Z4YR3HX7"
     };
     const FB_GAMEAPP = initializeApp(FB_GAMECONFIG)
-    const FB_GAMEDB = getDatabase(FB_GAMEAPP)
-    console.info(FB_GAMEDB);
+    fb_Db = getDatabase(FB_GAMEAPP)
+    console.info(fb_Db);
 }
 
 /***************************************************************
@@ -91,26 +92,23 @@ console.log('%c authenticate():',
 // 
  ****************************************************************/
 function fb_detectLoginChange(){
-    console.log('%c fb_detectLoginChange(): ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_B +';' );
     const AUTH = getAuth();
     onAuthStateChanged(AUTH, (user) => {
         if (user) {
-            alert("logged in!")
+            console.log("users is currently logged in")
+            alert("you are currently logged into "+user.email)
         } else {
-            alert("logged out!")
-            }
-    
-        }, (error) => {
-            alert("Uh, oh, something went wrong!")
-    
-        });
+            console.log("users is currently not logged in")
+            alert("you are currently not logged in")
+        }
+    }, (error) => {
+        console.log("error with logging in")
+    });
 }
 /***************************************************************
 // function fb_logOut()
 // called by html button "logout "
-// 
+// Log's you out of your account 
  ****************************************************************/
 function fb_logOut(){
     console.log('%c fb_LogOut ', 
@@ -123,8 +121,48 @@ function fb_logOut(){
     })
 
     .catch((error) => {
-        alert("yo have NOT been successfuly logged out")
+        alert("you have NOT been successfuly logged out. Please try again")
     });
+}
+
+/*****************************************************************
+// function fb_writeRecord()
+// called by html button "write record"
+// 
+ ****************************************************************/
+function fb_writeRecord(user){
+    const REF = ref(fb_Db,"/Stolen_Data");
+    set(REF, {User_Gmail:user}).then(() => {
+        console.log("data has been stolen"); 
+    })
+    .catch((error) => {
+        console.log(error);
+        console.log("data not stolen🥀");
+    });
+}
+/***************************************************************
+// function fb_readRecord()
+// called by html button "read record "
+// 
+ ****************************************************************/
+function fb_readRecord(){
+
+}
+/***************************************************************
+// function fb_readAll()
+// called by html button "readAll "
+// 
+ ****************************************************************/
+function fb_readAll(){
+
+}
+/***************************************************************
+// function fb_updateRecord()
+// called by html button "update record "
+// 
+ ****************************************************************/
+function fb_updateRecord(){
+
 }
 
 /**************************************************************/
