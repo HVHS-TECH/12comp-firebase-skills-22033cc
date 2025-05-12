@@ -22,9 +22,10 @@ import { initializeApp }
 
 import { getDatabase }
     from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
-    
+
 import { getAuth, GoogleAuthProvider, signInWithPopup,onAuthStateChanged,signOut }
     from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"; 
+
     import { ref, set,get }
     from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 /**************************************************************/
@@ -32,7 +33,8 @@ import { getAuth, GoogleAuthProvider, signInWithPopup,onAuthStateChanged,signOut
 // List all the functions called by code or html outside of this module
 /**************************************************************/
 export { 
-    fb_initialise, fb_authenticate, fb_detectLoginChange,fb_logOut,fb_writeRecord,fb_readRecord
+    fb_initialise, fb_authenticate, fb_detectLoginChange,fb_logOut,fb_writeRecord,fb_readRecord,
+    fb_readAll,
 };
 
 /***************************************************************
@@ -91,7 +93,8 @@ console.log('%c authenticate():',
 /***************************************************************
 // function fb_detectLoginChange()
 // called by html button "detect login change"
-// 
+// detects if user has been locked in; states status of log in 
+when pressed.
  ****************************************************************/
 function fb_detectLoginChange(){
     const AUTH = getAuth();
@@ -135,15 +138,21 @@ function fb_logOut(){
 /*****************************************************************
 // function fb_writeRecord()
 // called by html button "write record"
-// 
+// writes a random "worth" and "price" to the firebase
  ****************************************************************/
 function fb_writeRecord(){
+    var randomWorth = Math.floor(Math.random()*100);
         console.log('%c fb_writeRecord ', 
                 'color: ' + COL_C + 
                 '; background-color: ' + COL_B +';' );
+
     const REF = ref(fb_Db,"Stolen_Data");
-    set(REF, {Price:Math.floor(Math.random()*100)}).then(() => { 
-        console.log('%c data has been stolen ', 
+    set(REF, {Price:Math.floor(randomWorth*1.4),Worth:randomWorth}).then(() => { 
+        console.log('%c Your worth has been calcuated', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_G +';' );
+
+             console.log('%c Your price has been stored for future use', 
                 'color: ' + COL_C + 
                 '; background-color: ' + COL_G +';' );
     })
@@ -152,17 +161,41 @@ function fb_writeRecord(){
         console.log('%c data has been stolen ', 
                 'color: ' + COL_C + 
                 '; background-color: ' + COL_R +';' );
-    });
+    })
 }
+
 /***************************************************************
 // function fb_readRecord()
 // called by html button "read record "
-// 
+// gets data from the firebase and reads the record in the 
+ console log
  ****************************************************************/
 function fb_readRecord(){
     console.log('%c fb_readRecord ', 
                 'color: ' + COL_C + 
                 '; background-color: ' + COL_B +';' );
+                const dbReference= ref(fb_Db, "Stolen_Data");
+    get(dbReference).then((snapshot) => {
+        var fb_data = snapshot.val();
+        if (fb_data != null) {
+            console.log('%c Record found! ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_G +';' );
+            console.log(snapshot.val());
+        } else {
+            console.log('%c Record NOT found ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_R +';' );
+
+        }
+
+    }).catch((error) => {
+       console.log('%c Error! ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_R +';' ); 
+        console.log(error);
+    
+    });
 }
 /***************************************************************
 // function fb_readAll()
@@ -170,7 +203,32 @@ function fb_readRecord(){
 // 
  ****************************************************************/
 function fb_readAll(){
+     console.log('%c fb_readAll ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_B +';' );
 
+    const DB_REF= ref(fb_Db, "Stolen_Data");
+
+    get(DB_REF).then((snapshot) => {
+        var fb_data = snapshot.val();
+        if (fb_data != null) {
+            console.log('%c data found! ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_G +';' );
+            console.log(snapshot.val())
+        } else {
+            console.log('%c data found! ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_R +';' );
+        }
+
+    }).catch((error) => {
+        console.log('%c Error! ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_R +';' ); 
+        console.log(error);
+
+    });
 }
 /***************************************************************
 // function fb_updateRecord()

@@ -13,7 +13,7 @@ console.log('%c main.mjs',
 /***************************************************************/
 // Import all the constants & functions required from fb_io module
 import { fb_initialise, fb_authenticate,fb_detectLoginChange,fb_logOut,fb_writeRecord,
-    fb_readRecord
+    fb_readRecord,fb_readAll
  }
     from './fb_io.mjs';
     window.fb_initialise = fb_initialise;
@@ -22,6 +22,7 @@ import { fb_initialise, fb_authenticate,fb_detectLoginChange,fb_logOut,fb_writeR
     window.fb_logOut = fb_logOut;
     window.fb_writeRecord = fb_writeRecord;
     window.fb_readRecord = fb_readRecord;
+    window.fb_readAll = fb_readAll;
 /**************************************************************/
 // index.html main code
 /**************************************************************/
