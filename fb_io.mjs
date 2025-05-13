@@ -26,7 +26,7 @@ import { getDatabase }
 import { getAuth, GoogleAuthProvider, signInWithPopup,onAuthStateChanged,signOut }
     from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"; 
 
-    import { ref, set,get }
+    import { ref, set,get,update }
     from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 /**************************************************************/
 // EXPORT FUNCTIONS
@@ -34,7 +34,7 @@ import { getAuth, GoogleAuthProvider, signInWithPopup,onAuthStateChanged,signOut
 /**************************************************************/
 export { 
     fb_initialise, fb_authenticate, fb_detectLoginChange,fb_logOut,fb_writeRecord,fb_readRecord,
-    fb_readAll,
+    fb_readAll, fb_updateRecord
 };
 
 /***************************************************************
@@ -167,14 +167,14 @@ function fb_writeRecord(){
 /***************************************************************
 // function fb_readRecord()
 // called by html button "read record "
-// gets data from the firebase and reads the record in the 
+// gets price from the firebase and reads the record in the 
  console log
  ****************************************************************/
 function fb_readRecord(){
     console.log('%c fb_readRecord ', 
                 'color: ' + COL_C + 
                 '; background-color: ' + COL_B +';' );
-                const dbReference= ref(fb_Db, "Stolen_Data");
+                const dbReference= ref(fb_Db, "Stolen_Data/Price");
     get(dbReference).then((snapshot) => {
         var fb_data = snapshot.val();
         if (fb_data != null) {
@@ -200,14 +200,15 @@ function fb_readRecord(){
 /***************************************************************
 // function fb_readAll()
 // called by html button "readAll "
-// 
+// Gets both price and worth from firebase and reads it in the 
+console log
  ****************************************************************/
 function fb_readAll(){
      console.log('%c fb_readAll ', 
                 'color: ' + COL_C + 
                 '; background-color: ' + COL_B +';' );
 
-    const DB_REF= ref(fb_Db, "Stolen_Data");
+    const DB_REF= ref(fb_Db,"Stolen_Data");
 
     get(DB_REF).then((snapshot) => {
         var fb_data = snapshot.val();
@@ -217,7 +218,7 @@ function fb_readAll(){
                 '; background-color: ' + COL_G +';' );
             console.log(snapshot.val())
         } else {
-            console.log('%c data found! ', 
+            console.log('%c data not found! ', 
                 'color: ' + COL_C + 
                 '; background-color: ' + COL_R +';' );
         }
@@ -233,10 +234,25 @@ function fb_readAll(){
 /***************************************************************
 // function fb_updateRecord()
 // called by html button "update record "
-// 
+// increases "price" by 10%
  ****************************************************************/
 function fb_updateRecord(){
+    console.log('%c fb_updateRecord ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_B +';' ); 
 
+    const dbReference= ref(fb_Db, "Stolen_Data");
+ 
+    update(dbReference, {Price:Math.floor(Math.random()*100)} ).then(() => {
+         console.log('%c Price updated! ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_G +';' ); 
+    }).catch((error) => {
+         console.log('%c Error! ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_R +';' ); 
+        console.log(error);
+    });
 }
 
 /**************************************************************/
