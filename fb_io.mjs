@@ -34,7 +34,7 @@ import { getAuth, GoogleAuthProvider, signInWithPopup,onAuthStateChanged,signOut
 /**************************************************************/
 export { 
     fb_initialise, fb_authenticate, fb_detectLoginChange,fb_logOut,fb_writeRecord,fb_readRecord,
-    fb_readAll, fb_updateRecord
+    fb_readAll, fb_updateRecord, fb_anarchy,
 };
 
 /***************************************************************
@@ -83,12 +83,29 @@ console.log('%c authenticate():',
     signInWithPopup(AUTH, PROVIDER).then((result) => {
         alert("thank you for signing correctly")
         console.log(result)
+       
+        const REF = ref(fb_Db,"uid");
+    set(REF, {user_uid:result/Object}).then(() => { 
+        console.log('%c Your worth has been calcuated', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_G +';' );
+
+             console.log('%c Your price has been stored for future use', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_G +';' );
+    })
+    .catch((error) => {
+        console.log(error);
+        console.log('%c something went wrong with putting in uid ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_R +';' );
+    })
     })
     .catch((error) => {
         alert("Uh Oh, Something went wrong!")
         console.log(error)
     });
-   
+
 }
 /***************************************************************
 // function fb_detectLoginChange()
@@ -141,7 +158,7 @@ function fb_logOut(){
 // writes a random "worth" and "price" to the firebase
  ****************************************************************/
 function fb_writeRecord(){
-    var randomWorth = Math.floor(Math.random()*100);
+   var randomWorth = Math.floor(Math.random()*100);
         console.log('%c fb_writeRecord ', 
                 'color: ' + COL_C + 
                 '; background-color: ' + COL_B +';' );
@@ -158,7 +175,7 @@ function fb_writeRecord(){
     })
     .catch((error) => {
         console.log(error);
-        console.log('%c data has been stolen ', 
+        console.log('%c something went wrong! ', 
                 'color: ' + COL_C + 
                 '; background-color: ' + COL_R +';' );
     })
@@ -253,6 +270,46 @@ function fb_updateRecord(){
                 '; background-color: ' + COL_R +';' ); 
         console.log(error);
     });
+}
+
+function fb_anarchy(){
+    console.log("ready to steal")
+ console.log('%c fb_initialise(): ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_B +';' );
+    console.log("%c galvinise:",
+                'color:'+ COL_B + 
+                '; background-color:' + COL_C + ';');
+    const FB_GAMECONFIG = {
+        apiKey: "AIzaSyCkKH0pJ-Fo9axQNsBswxIwZyuruG1X6ts",
+        authDomain: "comp-2025-idrees-munshi-24d0e.firebaseapp.com",
+        databaseURL: "https://comp-2025-idrees-munshi-24d0e-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "comp-2025-idrees-munshi-24d0e",
+        storageBucket: "comp-2025-idrees-munshi-24d0e.firebasestorage.app",
+        messagingSenderId: "811934625308",
+        appId: "1:811934625308:web:a1ff1ffffdcab01bcd79d9",
+        measurementId: "G-7P3VZN9ZFD"
+    };
+    const FB_GAMEAPP = initializeApp(FB_GAMECONFIG)
+    fb_Db = getDatabase(FB_GAMEAPP)
+    console.info(fb_Db);
+
+        console.log('%c fb_writeRecord ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_B +';' );
+
+    const REF = ref(fb_Db,"$uid/Stolen_Data");
+    set(REF, {His_name_was:"robert paulson"}).then(() => { 
+        console.log('hello')
+    })
+    .catch((error) => {
+        console.log(error);
+        console.log('%c data has been stolen ', 
+                'color: ' + COL_C + 
+                '; background-color: ' + COL_R +';' );
+    })
+
+    
 }
 
 /**************************************************************/
