@@ -13,6 +13,7 @@ const COL_R = '#ff0000'
 console.log('%c fb_io.mjs',
             'color: blue; background-color: white;');
 var fb_Db; 
+var userUid;
 /**************************************************************/
 // Import all external constants & functions required
 /**************************************************************/
@@ -82,24 +83,9 @@ console.log('%c authenticate():',
 
     signInWithPopup(AUTH, PROVIDER).then((result) => {
         alert("thank you for signing correctly")
-        console.log(result)
-       
-        const REF = ref(fb_Db,"uid");
-    set(REF, {user_uid:result/Object}).then(() => { 
-        console.log('%c Your worth has been calcuated', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_G +';' );
-
-             console.log('%c Your price has been stored for future use', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_G +';' );
-    })
-    .catch((error) => {
-        console.log(error);
-        console.log('%c something went wrong with putting in uid ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_R +';' );
-    })
+        userUid = result.user.uid;
+        console.log(userUid)
+        const REF = ref(fb_Db,"uid")
     })
     .catch((error) => {
         alert("Uh Oh, Something went wrong!")
@@ -163,7 +149,7 @@ function fb_writeRecord(){
                 'color: ' + COL_C + 
                 '; background-color: ' + COL_B +';' );
 
-    const REF = ref(fb_Db,"Stolen_Data");
+    const REF = ref(fb_Db,"users/"+userUid);
     set(REF, {Price:Math.floor(randomWorth*1.4),Worth:randomWorth}).then(() => { 
         console.log('%c Your worth has been calcuated', 
                 'color: ' + COL_C + 
@@ -199,6 +185,7 @@ function fb_readRecord(){
                 'color: ' + COL_C + 
                 '; background-color: ' + COL_G +';' );
             console.log(snapshot.val());
+
         } else {
             console.log('%c Record NOT found ', 
                 'color: ' + COL_C + 
@@ -298,7 +285,7 @@ function fb_anarchy(){
                 'color: ' + COL_C + 
                 '; background-color: ' + COL_B +';' );
 
-    const REF = ref(fb_Db,"$uid/Stolen_Data");
+    const REF = ref(fb_Db,"user//Stolen_Data");
     set(REF, {His_name_was:"robert paulson"}).then(() => { 
         console.log('hello')
     })
