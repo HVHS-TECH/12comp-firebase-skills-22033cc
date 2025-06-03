@@ -11,8 +11,8 @@ const COL_B = '#CD7F32';	//  console.log for functions scheme
 const COL_G = '#15ff00'
 const COL_R = '#ff0000'
 console.log('%c fb_io.mjs',
-            'color: blue; background-color: white;');
-var fb_Db; 
+    'color: blue; background-color: white;');
+var fb_Db;
 var userUid;
 /**************************************************************/
 // Import all external constants & functions required
@@ -24,18 +24,18 @@ import { initializeApp }
 import { getDatabase }
     from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
-import { getAuth, GoogleAuthProvider, signInWithPopup,onAuthStateChanged,signOut }
-    from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"; 
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut }
+    from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
-    import { ref, set,get,update }
+import { ref, set, get, update, query, orderByChild, limitToFirst }
     from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 /**************************************************************/
 // EXPORT FUNCTIONS
 // List all the functions called by code or html outside of this module
 /**************************************************************/
-export { 
-    fb_initialise, fb_authenticate, fb_detectLoginChange,fb_logOut,fb_writeRecord,fb_readRecord,
-    fb_readAll, fb_updateRecord, fb_anarchy,
+export {
+    fb_initialise, fb_authenticate, fb_detectLoginChange, fb_logOut, fb_writeRecord, fb_readRecord,
+    fb_readAll, fb_updateRecord, fb_anarchy, fb_read_sorted
 };
 
 /***************************************************************
@@ -44,13 +44,13 @@ export {
 // intatilises connecting to firebase
  ****************************************************************/
 function fb_initialise() {
-    
-    console.log('%c fb_initialise(): ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_B +';' );
+
+    console.log('%c fb_initialise(): ',
+        'color: ' + COL_C +
+        '; background-color: ' + COL_B + ';');
     console.log("%c galvinise:",
-                'color:'+ COL_B + 
-                '; background-color:' + COL_C + ';');
+        'color:' + COL_B +
+        '; background-color:' + COL_C + ';');
     const FB_GAMECONFIG = {
         apiKey: "AIzaSyCCqhJW7S5L9nSkhlB_8Nvg3zzD4w65hjU",
         authDomain: "comp-conor-church.firebaseapp.com",
@@ -71,11 +71,11 @@ function fb_initialise() {
 // called by html button "authenticate"
 // call functions from import to login the user
  ****************************************************************/
-function fb_authenticate(){
-console.log('%c authenticate():',
-    'color:' + COL_C +
-    'background-color:' + COL_B + ';');
-    const AUTH =  getAuth(); //something is wrong here
+function fb_authenticate() {
+    console.log('%c authenticate():',
+        'color:' + COL_C +
+        'background-color:' + COL_B + ';');
+    const AUTH = getAuth(); //something is wrong here
     const PROVIDER = new GoogleAuthProvider();
     PROVIDER.setCustomParameters({
         prompt: 'select_account'
@@ -85,12 +85,12 @@ console.log('%c authenticate():',
         alert("thank you for signing correctly")
         userUid = result.user.uid;
         console.log(userUid)
-        const REF = ref(fb_Db,"uid")
+        const REF = ref(fb_Db, "uid")
     })
-    .catch((error) => {
-        alert("Uh Oh, Something went wrong!")
-        console.log(error)
-    });
+        .catch((error) => {
+            alert("Uh Oh, Something went wrong!")
+            console.log(error)
+        });
 
 }
 /***************************************************************
@@ -99,12 +99,12 @@ console.log('%c authenticate():',
 // detects if user has been locked in; states status of log in 
 when pressed.
  ****************************************************************/
-function fb_detectLoginChange(){
+function fb_detectLoginChange() {
     const AUTH = getAuth();
     onAuthStateChanged(AUTH, (user) => {
         if (user) {
             console.log("users is currently logged in")
-            alert("you are currently logged into "+user.email)
+            alert("you are currently logged into " + user.email)
         } else {
             console.log("users is currently not logged in")
             alert("you are currently not logged in")
@@ -117,25 +117,25 @@ function fb_detectLoginChange(){
 // called by html button "logout "
 // Log's you out of your account 
  ****************************************************************/
-function fb_logOut(){
-    console.log('%c fb_LogOut ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_B +';' );
+function fb_logOut() {
+    console.log('%c fb_LogOut ',
+        'color: ' + COL_C +
+        '; background-color: ' + COL_B + ';');
     const AUTH = getAuth();
 
     signOut(AUTH).then(() => {
         alert("you have successfully been logged out")
-        console.log('%c successful logout ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_G +';' );
+        console.log('%c successful logout ',
+            'color: ' + COL_C +
+            '; background-color: ' + COL_G + ';');
     })
 
-    .catch((error) => {
-        alert("you have NOT been successfuly logged out. Please try again")
-        console.log('%c unsuccesful logout ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_R +';' );
-    });
+        .catch((error) => {
+            alert("you have NOT been successfuly logged out. Please try again")
+            console.log('%c unsuccesful logout ',
+                'color: ' + COL_C +
+                '; background-color: ' + COL_R + ';');
+        });
 }
 
 /*****************************************************************
@@ -143,28 +143,32 @@ function fb_logOut(){
 // called by html button "write record"
 // writes a random "worth" and "price" to the firebase
  ****************************************************************/
-function fb_writeRecord(){
-   var randomWorth = Math.floor(Math.random()*100);
-        console.log('%c fb_writeRecord ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_B +';' );
+function fb_writeRecord() {
+    var randomWorth = Math.floor(Math.random() * 100);
+    console.log('%c fb_writeRecord ',
+        'color: ' + COL_C +
+        '; background-color: ' + COL_B + ';');
+    if (userUid = !null) {
+        const REF = ref(fb_Db, "users/" + userUid + "/Stolen_Data");
+        set(REF, { Price: Math.floor(randomWorth * 1.4), Worth: randomWorth }).then(() => {
+            console.log('%c Your worth has been calcuated',
+                'color: ' + COL_C +
+                '; background-color: ' + COL_G + ';');
 
-    const REF = ref(fb_Db,"users/"+userUid);
-    set(REF, {Price:Math.floor(randomWorth*1.4),Worth:randomWorth}).then(() => { 
-        console.log('%c Your worth has been calcuated', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_G +';' );
-
-             console.log('%c Your price has been stored for future use', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_G +';' );
-    })
-    .catch((error) => {
-        console.log(error);
-        console.log('%c something went wrong! ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_R +';' );
-    })
+            console.log('%c Your price has been stored for future use',
+                'color: ' + COL_C +
+                '; background-color: ' + COL_G + ';')
+        })
+            .catch((error) => {
+                console.log(error);
+                console.log('%c something went wrong! ',
+                    'color: ' + COL_C +
+                    '; background-color: ' + COL_R + ';');
+            })
+    } else {
+        alert("please log in using 'authenticate' button")
+        console.log("no auth")
+    }
 }
 
 /***************************************************************
@@ -173,32 +177,32 @@ function fb_writeRecord(){
 // gets price from the firebase and reads the record in the 
  console log
  ****************************************************************/
-function fb_readRecord(){
-    console.log('%c fb_readRecord ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_B +';' );
-                const dbReference= ref(fb_Db, "Stolen_Data/Price");
+function fb_readRecord() {
+    console.log('%c fb_readRecord ',
+        'color: ' + COL_C +
+        '; background-color: ' + COL_B + ';');
+    const dbReference = ref(fb_Db, "users/" + userUid + "/Stolen_Data/Price");
     get(dbReference).then((snapshot) => {
         var fb_data = snapshot.val();
         if (fb_data != null) {
-            console.log('%c Record found! ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_G +';' );
+            console.log('%c Record found! ',
+                'color: ' + COL_C +
+                '; background-color: ' + COL_G + ';');
             console.log(snapshot.val());
 
         } else {
-            console.log('%c Record NOT found ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_R +';' );
+            console.log('%c Record NOT found ',
+                'color: ' + COL_C +
+                '; background-color: ' + COL_R + ';');
 
         }
 
     }).catch((error) => {
-       console.log('%c Error! ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_R +';' ); 
+        console.log('%c Error! ',
+            'color: ' + COL_C +
+            '; background-color: ' + COL_R + ';');
         console.log(error);
-    
+
     });
 }
 /***************************************************************
@@ -207,30 +211,30 @@ function fb_readRecord(){
 // Gets both price and worth from firebase and reads it in the 
 console log
  ****************************************************************/
-function fb_readAll(){
-     console.log('%c fb_readAll ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_B +';' );
+function fb_readAll() {
+    console.log('%c fb_readAll ',
+        'color: ' + COL_C +
+        '; background-color: ' + COL_B + ';');
 
-    const DB_REF= ref(fb_Db,"Stolen_Data");
+    const DB_REF = ref(fb_Db, "users/" + userUid + "/Stolen_Data");
 
     get(DB_REF).then((snapshot) => {
         var fb_data = snapshot.val();
         if (fb_data != null) {
-            console.log('%c data found! ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_G +';' );
+            console.log('%c data found! ',
+                'color: ' + COL_C +
+                '; background-color: ' + COL_G + ';');
             console.log(snapshot.val())
         } else {
-            console.log('%c data not found! ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_R +';' );
+            console.log('%c data not found! ',
+                'color: ' + COL_C +
+                '; background-color: ' + COL_R + ';');
         }
 
     }).catch((error) => {
-        console.log('%c Error! ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_R +';' ); 
+        console.log('%c Error! ',
+            'color: ' + COL_C +
+            '; background-color: ' + COL_R + ';');
         console.log(error);
 
     });
@@ -240,33 +244,61 @@ function fb_readAll(){
 // called by html button "update record "
 // increases "price" by 10%
  ****************************************************************/
-function fb_updateRecord(){
-    console.log('%c fb_updateRecord ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_B +';' ); 
+function fb_updateRecord() {
+    console.log('%c fb_updateRecord ',
+        'color: ' + COL_C +
+        '; background-color: ' + COL_B + ';');
 
-    const dbReference= ref(fb_Db, "Stolen_Data");
- 
-    update(dbReference, {Price:Math.floor(Math.random()*100)} ).then(() => {
-         console.log('%c Price updated! ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_G +';' ); 
+    const dbReference = ref(fb_Db, "users/" + userUid + "/Stolen_Data");
+
+    update(dbReference, { Price: Math.floor(Math.random() * 100) }).then(() => {
+        console.log('%c Price updated! ',
+            'color: ' + COL_C +
+            '; background-color: ' + COL_G + ';');
     }).catch((error) => {
-         console.log('%c Error! ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_R +';' ); 
+        console.log('%c Error! ',
+            'color: ' + COL_C +
+            '; background-color: ' + COL_R + ';');
         console.log(error);
     });
 }
+/***************************************************************
+// function fb_read_sorted()
+// called by html button "read sorted"
+// reads price and worth seperately
+ ****************************************************************/
+function fb_read_sorted() {
+    var sortKey = "Price";
 
-function fb_anarchy(){
+    const dbReference = query(ref(fb_Db, "users/*/Stolen_Data"), orderByChild(sortKey), limitToFirst(3));
+    get(dbReference).then((snapshot) => {
+        var fb_data = snapshot.val();
+        if (fb_data != null) {
+            console.log(fb_data)
+        } else {
+            console.log("something went wrong")
+
+        }
+
+    }).catch((error) => {
+        console.log(error)
+    });
+
+
+}
+/***************************************************************
+// function fb_read_anarchy()
+// called by html button "anarchy"
+// its chaos cannot be explain to a mere mortal man
+ ***************************************************************/
+function fb_anarchy() {
     console.log("ready to steal")
- console.log('%c fb_initialise(): ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_B +';' );
+    console.log('%c fb_initialise(): ',
+        'color: ' + COL_C +
+        '; background-color: ' + COL_B + ';');
     console.log("%c galvinise:",
-                'color:'+ COL_B + 
-                '; background-color:' + COL_C + ';');
+        'color:' + COL_B +
+        '; background-color:' + COL_C + ';');
     const FB_GAMECONFIG = {
         apiKey: "AIzaSyCkKH0pJ-Fo9axQNsBswxIwZyuruG1X6ts",
         authDomain: "comp-2025-idrees-munshi-24d0e.firebaseapp.com",
@@ -281,22 +313,22 @@ function fb_anarchy(){
     fb_Db = getDatabase(FB_GAMEAPP)
     console.info(fb_Db);
 
-        console.log('%c fb_writeRecord ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_B +';' );
+    console.log('%c fb_writeRecord ',
+        'color: ' + COL_C +
+        '; background-color: ' + COL_B + ';');
 
-    const REF = ref(fb_Db,"user//Stolen_Data");
-    set(REF, {His_name_was:"robert paulson"}).then(() => { 
+    const REF = ref(fb_Db, "user//Stolen_Data");
+    set(REF, { His_name_was: "robert paulson" }).then(() => {
         console.log('hello')
     })
-    .catch((error) => {
-        console.log(error);
-        console.log('%c data has been stolen ', 
-                'color: ' + COL_C + 
-                '; background-color: ' + COL_R +';' );
-    })
+        .catch((error) => {
+            console.log(error);
+            console.log('%c data has been stolen ',
+                'color: ' + COL_C +
+                '; background-color: ' + COL_R + ';');
+        })
 
-    
+
 }
 
 /**************************************************************/
