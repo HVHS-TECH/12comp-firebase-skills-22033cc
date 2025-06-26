@@ -181,7 +181,7 @@ function fb_readRecord() {
     console.log('%c fb_readRecord ',
         'color: ' + COL_C +
         '; background-color: ' + COL_B + ';');
-    const dbReference = ref(fb_Db, "users/" + userUid + "/Stolen_Data/Price");
+    const dbReference = ref(fb_Db, "/users/" + userUid + "/Stolen_Data/Price");
     get(dbReference).then((snapshot) => {
         var fb_data = snapshot.val();
         if (fb_data != null) {
